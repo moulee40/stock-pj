@@ -10,6 +10,7 @@ import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormLabel from "@material-ui/core/FormLabel";
+import StatisticsTable from "./StatisticsTable";
 
 const styles = (theme) => ({
   root: {
@@ -24,6 +25,7 @@ class Statistics extends React.Component {
   state = {
     count: "",
     exchangeValue: "all",
+    shouldDisplayTable: false,
   };
 
   handleDisplayChange = (event) => {
@@ -34,61 +36,88 @@ class Statistics extends React.Component {
     this.setState({ exchangeValue: event.target.value });
   };
 
+  handleSubmit = (event) => {
+    this.setState({ shouldDisplayTable: true });
+  };
+
+  handleBack = () => {
+    this.setState({ shouldDisplayTable: false });
+  };
+
   render() {
     const { classes } = this.props;
-    const { count, exchangeValue } = this.state;
+    const { count, exchangeValue, shouldDisplayTable } = this.state;
     return (
       <div className="flex justify-center">
-        <div className="flex flex-col justify-center mt-10 space-y-2">
-          <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel id="demo-simple-select-outlined-label">
-              Display
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-outlined-label"
-              id="demo-simple-select-outlined"
-              value={count}
-              onChange={this.handleDisplayChange}
-              label="Display"
-            >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
-              <MenuItem value={10}>Last 10</MenuItem>
-              <MenuItem value={100}>Last 100</MenuItem>
-              <MenuItem value={200}>Last 250</MenuItem>
-            </Select>
-          </FormControl>
+        {!shouldDisplayTable && (
+          <div className="flex flex-col justify-center mt-10 space-y-2">
+            <FormControl variant="outlined" className={classes.formControl}>
+              <InputLabel id="demo-simple-select-outlined-label">
+                Display
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-outlined-label"
+                id="demo-simple-select-outlined"
+                value={count}
+                onChange={this.handleDisplayChange}
+                label="Display"
+              >
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                <MenuItem value={10}>Last 10</MenuItem>
+                <MenuItem value={100}>Last 100</MenuItem>
+                <MenuItem value={200}>Last 250</MenuItem>
+              </Select>
+            </FormControl>
 
-          <FormControl component="fieldset">
-            <FormLabel component="legend">Exchange</FormLabel>
-            <RadioGroup
-              aria-label="exchange"
-              name="exchange1"
-              value={exchangeValue}
-              onChange={this.handleExchangeRadioButton}
-            >
-              <FormControlLabel value="all" control={<Radio />} label="ALL" />
-              <FormControlLabel value="amex" control={<Radio />} label="AMEX" />
-              <FormControlLabel value="nyse" control={<Radio />} label="NYSE" />
-              <FormControlLabel
-                value="nasdaq"
-                control={<Radio />}
-                label="NASDAQ"
-              />
-            </RadioGroup>
-          </FormControl>
+            <FormControl component="fieldset">
+              <FormLabel component="legend">Exchange</FormLabel>
+              <RadioGroup
+                aria-label="exchange"
+                name="exchange1"
+                value={exchangeValue}
+                onChange={this.handleExchangeRadioButton}
+              >
+                <FormControlLabel value="all" control={<Radio />} label="ALL" />
+                <FormControlLabel
+                  value="amex"
+                  control={<Radio />}
+                  label="AMEX"
+                />
+                <FormControlLabel
+                  value="nyse"
+                  control={<Radio />}
+                  label="NYSE"
+                />
+                <FormControlLabel
+                  value="nasdaq"
+                  control={<Radio />}
+                  label="NASDAQ"
+                />
+              </RadioGroup>
+            </FormControl>
 
-          <TextField
-            id="outlined-search"
-            label="Symbol"
-            type="search"
-            variant="outlined"
-          />
-          <Button variant="contained" color="primary">
-            Submit
-          </Button>
-        </div>
+            <TextField
+              id="outlined-search"
+              label="Symbol"
+              type="search"
+              variant="outlined"
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleSubmit}
+            >
+              Submit
+            </Button>
+          </div>
+        )}
+        {shouldDisplayTable && (
+          <div className="flex flex-col justify-center mt-10 space-y-2">
+            <StatisticsTable handleBack={this.handleBack} />
+          </div>
+        )}
       </div>
     );
   }
