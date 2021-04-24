@@ -1,10 +1,11 @@
 import './App.css';
 import './index.css'
+import Main from './components/Main'
 
 function App() {
   return (
-    <div >
-      <h2 className="flex justify-center items-center h-screen text-8xl">Lets Build</h2>
+    <div className="m-2 h-screen max-h-screen">
+      <Main/>
     </div>
   );
 }
