@@ -128,7 +128,7 @@ class Analysis extends React.Component {
               </div>
                )}
                 {isShouldDisplayGraph && isQuarterAnalysisGraph && (
-                    <div style={{width:'100%',marginTop:'100px'}}>
+                    <div style={{width:'50%',marginTop:'100px'}}>
                         <QuarterAnalysisChart handleBack={this.handleBack} />
                     </div>
                 )}
