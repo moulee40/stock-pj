@@ -5,6 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
+import SingleChart from "./SingleChart";
 
 const styles = theme => ({
     root_input:{
@@ -22,7 +23,7 @@ class Analysis extends React.Component {
     state = { 
         is50Dayschecked: false,
         is200Dayschecked: false,
-        shouldDisplayTable: false,
+        isShouldDisplayGraph: false,
      }
      handleCheckBoxChange = (event) => {
         if (event.target.name === "50Days Average") {
@@ -31,13 +32,23 @@ class Analysis extends React.Component {
           this.setState({ is200Dayschecked: event.target.checked });
         }
       };
+
+      handleBack = () => {
+        this.setState({ isShouldDisplayGraph: false });
+      }; 
+
+      handleSubmit = (event) => {
+        this.setState({ isShouldDisplayGraph: true });
+      };
+
     render() {
         const {
-            is50Dayschecked,is200Dayschecked
+            is50Dayschecked,is200Dayschecked,isShouldDisplayGraph
         } = this.state;
         const { classes } = this.props;
         return (
           <div className="flex justify-center">
+              {!isShouldDisplayGraph && (
               <div className="flex flex-col justify-center mt-10 space-y-2">
                   <h1>Quarter Analysis</h1>
                 <div>
@@ -92,6 +103,12 @@ class Analysis extends React.Component {
                         </Button>
                  </div>
               </div>
+               )}
+                {isShouldDisplayGraph && (
+                    <div style={{width:'100%',marginTop:'100px'}}>
+                        <SingleChart handleBack={this.handleBack} />
+                    </div>
+                )}
           </div>
         );
       }
