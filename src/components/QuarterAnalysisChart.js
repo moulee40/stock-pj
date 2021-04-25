@@ -2,7 +2,7 @@ import React from "react";
 import CanvasJSReact from './canvasjs.react';
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-class SingleChart extends React.Component {
+class QuarterAnalysisChart extends React.Component {
   state = {};
   render() {
 		const options = {
@@ -58,13 +58,17 @@ class SingleChart extends React.Component {
 		
 		return (
 		<div>
+        <h1 className="cursor-pointer underline text-3xl" onClick={this.props.handleBack}>
+          Back
+        </h1>
 			<CanvasJSChart options = {options} 
 				/* onRef={ref => this.chart = ref} */
 			/>
+     
 			{/*You can get reference to the chart instance as shown above using onRef. This allows you to access all chart properties and methods*/}
 		</div>
 		);
 	}
 }
 
-export default SingleChart;
+export default QuarterAnalysisChart;

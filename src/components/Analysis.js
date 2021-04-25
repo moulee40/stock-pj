@@ -5,7 +5,10 @@ import { withStyles } from '@material-ui/core/styles';
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-import SingleChart from "./SingleChart";
+import QuarterAnalysisChart from "./QuarterAnalysisChart";
+import MovingAverageChart from "./MovingAverageChart";
+import StockComparisonChart from "./StockComparisonChart";
+
 
 const styles = theme => ({
     root_input:{
@@ -24,6 +27,9 @@ class Analysis extends React.Component {
         is50Dayschecked: false,
         is200Dayschecked: false,
         isShouldDisplayGraph: false,
+        isQuarterAnalysisGraph:false,
+        isMovingAverageGraph:false,
+        isStockComparisonGraph:false
      }
      handleCheckBoxChange = (event) => {
         if (event.target.name === "50Days Average") {
@@ -34,16 +40,35 @@ class Analysis extends React.Component {
       };
 
       handleBack = () => {
-        this.setState({ isShouldDisplayGraph: false });
+        this.setState({ 
+            isShouldDisplayGraph: false, 
+            isQuarterAnalysisGraph:false,
+            isMovingAverageGraph:false,
+            isStockComparisonGraph:false
+        });
       }; 
 
       handleSubmit = (event) => {
         this.setState({ isShouldDisplayGraph: true });
       };
 
+      handleQuarterAnalysis = (event) => {
+        this.setState({ isShouldDisplayGraph: true,isQuarterAnalysisGraph:true });
+      };
+
+      
+      handleMovingAverage = (event) => {
+        this.setState({ isShouldDisplayGraph: true,isMovingAverageGraph:true });
+      };
+
+      
+      handleStockComparison = (event) => {
+        this.setState({ isShouldDisplayGraph: true,isStockComparisonGraph:true });
+      };
+
     render() {
         const {
-            is50Dayschecked,is200Dayschecked,isShouldDisplayGraph
+            is50Dayschecked,is200Dayschecked,isShouldDisplayGraph,isQuarterAnalysisGraph,isMovingAverageGraph,isStockComparisonGraph
         } = this.state;
         const { classes } = this.props;
         return (
@@ -54,7 +79,7 @@ class Analysis extends React.Component {
                 <div>
                    <span style={{padding:16}}>Symbol:</span>
                       <Input classes={{ root: classes.root_input }} autoFocus disableUnderline/>
-                        <Button variant="contained" color="primary" onClick={this.handleSubmit}>
+                        <Button variant="contained" color="primary" onClick={this.handleQuarterAnalysis}>
                             Submit
                         </Button>
                  </div>
@@ -83,7 +108,7 @@ class Analysis extends React.Component {
               </FormGroup>
                    <span style={{padding:16}}>Symbol:</span>
                       <Input classes={{ root: classes.root_input }} autoFocus disableUnderline/>
-                        <Button variant="contained" color="primary" onClick={this.handleSubmit}>
+                        <Button variant="contained" color="primary" onClick={this.handleMovingAverage}>
                             Submit
                         </Button>
                  </div>
@@ -91,22 +116,30 @@ class Analysis extends React.Component {
                  <div>
                    <span style={{padding:16}}>Symbol 1:</span>
                       <Input classes={{ root: classes.root_input }} autoFocus disableUnderline/>
-                        <Button variant="contained" color="primary" onClick={this.handleSubmit}>
-                            Submit
-                        </Button>
+                       
                  </div>
                  <div>
                    <span style={{padding:16}}>Symbol 2:</span>
                       <Input classes={{ root: classes.root_input }} autoFocus disableUnderline/>
-                        <Button variant="contained" color="primary" onClick={this.handleSubmit}>
+                        <Button variant="contained" color="primary" onClick={this.handleStockComparison}>
                             Submit
                         </Button>
                  </div>
               </div>
                )}
-                {isShouldDisplayGraph && (
+                {isShouldDisplayGraph && isQuarterAnalysisGraph && (
                     <div style={{width:'100%',marginTop:'100px'}}>
-                        <SingleChart handleBack={this.handleBack} />
+                        <QuarterAnalysisChart handleBack={this.handleBack} />
+                    </div>
+                )}
+                 {isShouldDisplayGraph && isMovingAverageGraph && (
+                    <div style={{width:'50%',marginTop:'100px'}}>
+                        <MovingAverageChart handleBack={this.handleBack} />
+                    </div>
+                )}
+                {isShouldDisplayGraph && isStockComparisonGraph && (
+                    <div style={{width:'50%',marginTop:'100px'}}>
+                        <StockComparisonChart handleBack={this.handleBack} />
                     </div>
                 )}
           </div>
