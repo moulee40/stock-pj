@@ -18,18 +18,52 @@ class StockComparisonChart extends React.Component {
 		this.chart.render();
 	}
   state = {};
+	handleSymbolData1(){
+		const finalData=[];
+		const data1 =this.props.data1;
+		data1.map((data) => {
+					let openPrice = data.openPrice;
+					let highPrice = data.highPrice;
+					let lowPrice = data.lowPrice;
+					let closePrice = data.closePrice;
+					let date = new Date(data.tradeDate);
+					let tempData ={x:date,y:openPrice};
+					finalData.push(tempData);
+		});
+		return finalData;
+	}
+	handleSymbolData2(){
+		const finalData=[];
+		const data2 =this.props.data2;
+		data2.map((data) => {
+					let openPrice = data.openPrice;
+					let highPrice = data.highPrice;
+					let lowPrice = data.lowPrice;
+					let closePrice = data.closePrice;
+					let date = new Date(data.tradeDate);
+					let tempData ={x:date,y:openPrice};
+					finalData.push(tempData);
+		});
+		return finalData;
+	}
   render() {
+	const data1 = this.props.data1;
+	const data2 = this.props.data2;
+	const stock1 = data1[0].companyName
+	const stock2 = data2[0].companyName
 	const data = {
 		animationEnabled: true,
 		colorSet: "colorSet2",
 		title: {
-			text: "IBM Corporation   vs   Microsoft Corporation"
+			text: stock1.concat(' vs ').concat(stock2)
 		},
 		axisX: {
 			valueFormatString: "MMMM-YYYY"
 		},
 		axisY: {
+			includeZero:false,
 			prefix: "$",
+			title: "Price (in USD)"
 		},
 		toolTip: {
 			shared: true
@@ -41,44 +75,18 @@ class StockComparisonChart extends React.Component {
 		},
 		data: [{
 			type: "line",
-			name: "Stock 1",
+			name: stock1,
 			showInLegend: true,
 			xValueFormatString: "MMMM-YYYY",
-			yValueFormatString: "$#,##0",
-			dataPoints: [
-				{ x: new Date(2017, 0), y: 27500 },
-				{ x: new Date(2017, 1), y: 29000 },
-				{ x: new Date(2017, 2), y: 22000 },
-				{ x: new Date(2017, 3), y: 26500 },
-				{ x: new Date(2017, 4), y: 33000 },
-				{ x: new Date(2017, 5), y: 37000 },
-				{ x: new Date(2017, 6), y: 32000 },
-				{ x: new Date(2017, 7), y: 27500 },
-				{ x: new Date(2017, 8), y: 29500 },
-				{ x: new Date(2017, 9), y: 43000 },
-				{ x: new Date(2017, 10), y: 55000},
-				{ x: new Date(2017, 11), y: 39500 }
-			]
+			yValueFormatString: "$###0.00",
+			dataPoints:this.handleSymbolData1()
 		},{
 			type: "line",
-			name: "Stock 2",
+			name: stock2 , 
 			showInLegend: true,
 			xValueFormatString: "MMMM-YYYY",
-			yValueFormatString: "$#,##0",
-			dataPoints: [
-				{ x: new Date(2017, 0), y: 38000 },
-				{ x: new Date(2017, 1), y: 39000 },
-				{ x: new Date(2017, 2), y: 35000 },
-				{ x: new Date(2017, 3), y: 37000 },
-				{ x: new Date(2017, 4), y: 42000 },
-				{ x: new Date(2017, 5), y: 48000 },
-				{ x: new Date(2017, 6), y: 41000 },
-				{ x: new Date(2017, 7), y: 38000 },
-				{ x: new Date(2017, 8), y: 42000 },
-				{ x: new Date(2017, 9), y: 45000 },
-				{ x: new Date(2017, 10), y: 48000 },
-				{ x: new Date(2017, 11), y: 47000 }
-			]
+			yValueFormatString: "$###0.00",
+			dataPoints:this.handleSymbolData2()
 		}]
 	}
 		
