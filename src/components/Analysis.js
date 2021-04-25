@@ -8,6 +8,11 @@ import Checkbox from "@material-ui/core/Checkbox";
 import QuarterAnalysisChart from "./QuarterAnalysisChart";
 import MovingAverageChart from "./MovingAverageChart";
 import StockComparisonChart from "./StockComparisonChart";
+import axios from 'axios';
+
+const quarterAnalysisBaseUrl = 'http://localhost:8080/stockapp/getCurrentQuarterDetail/';
+const stockComparisonBaseUrl = 'http://localhost:8080/stockapp/getComparisonDetail/';
+
 
 
 const styles = theme => ({
@@ -23,13 +28,24 @@ const styles = theme => ({
       },
 });
 class Analysis extends React.Component {
+    constructor(){
+        super();
+        
+    }
     state = { 
         is50Dayschecked: false,
         is200Dayschecked: false,
         isShouldDisplayGraph: false,
         isQuarterAnalysisGraph:false,
         isMovingAverageGraph:false,
-        isStockComparisonGraph:false
+        isStockComparisonGraph:false,
+        QuarterAnalysisData:[],
+        stockComparisonFirstData:[],
+        stockComparisonSecondData:[],
+        quarterAnalysisInput:'',
+        stockComparsionFirstInput:'',
+        stockComparsionSecondInput:'',
+
      }
      handleCheckBoxChange = (event) => {
         if (event.target.name === "50Days Average") {
@@ -44,7 +60,8 @@ class Analysis extends React.Component {
             isShouldDisplayGraph: false, 
             isQuarterAnalysisGraph:false,
             isMovingAverageGraph:false,
-            isStockComparisonGraph:false
+            isStockComparisonGraph:false,
+            
         });
       }; 
 
@@ -53,7 +70,15 @@ class Analysis extends React.Component {
       };
 
       handleQuarterAnalysis = (event) => {
-        this.setState({ isShouldDisplayGraph: true,isQuarterAnalysisGraph:true });
+          const{quarterAnalysisInput} = this.state;
+          const quarterAnalysisUrl = quarterAnalysisBaseUrl.concat(quarterAnalysisInput);
+        axios.get(quarterAnalysisUrl).then(res=>{
+            this.setState({
+                QuarterAnalysisData:res.data.currentQuarterDetail,
+                isShouldDisplayGraph:true,isQuarterAnalysisGraph:true
+            })
+        })
+        console.log(this.state.QuarterAnalysisData);
       };
 
       
@@ -63,12 +88,36 @@ class Analysis extends React.Component {
 
       
       handleStockComparison = (event) => {
-        this.setState({ isShouldDisplayGraph: true,isStockComparisonGraph:true });
+        const{stockComparsionFirstInput,stockComparsionSecondInput} = this.state;
+        const stockComparisonUrl = stockComparisonBaseUrl.concat(stockComparsionFirstInput)
+                                   .concat('/').concat(stockComparsionSecondInput);
+            axios.get(stockComparisonUrl).then(res=>{
+                this.setState({
+                    stockComparisonFirstData:res.data.symbol1,
+                    stockComparisonSecondData:res.data.symbol2,
+                    isShouldDisplayGraph:true,isStockComparisonGraph:true
+                })
+            })
       };
+
+      handleQuarterAnalysisChange = (event) => {
+          const inputValue = event.target.value;
+        this.setState({ quarterAnalysisInput: inputValue});
+      };
+
+      handleStockComparsionFirstInputChange = (event) => {
+        const inputValue = event.target.value;
+      this.setState({ stockComparsionFirstInput: inputValue});
+    };
+
+    handleStockComparsionSecondInputChange = (event) => {
+        const inputValue = event.target.value;
+      this.setState({ stockComparsionSecondInput: inputValue});
+    };
 
     render() {
         const {
-            is50Dayschecked,is200Dayschecked,isShouldDisplayGraph,isQuarterAnalysisGraph,isMovingAverageGraph,isStockComparisonGraph
+            QuarterAnalysisData,stockComparisonFirstData,stockComparisonSecondData,is50Dayschecked,is200Dayschecked,isShouldDisplayGraph,isQuarterAnalysisGraph,isMovingAverageGraph,isStockComparisonGraph
         } = this.state;
         const { classes } = this.props;
         return (
@@ -78,7 +127,7 @@ class Analysis extends React.Component {
                   <h1>Quarter Analysis</h1>
                 <div>
                    <span style={{padding:16}}>Symbol:</span>
-                      <Input classes={{ root: classes.root_input }} autoFocus disableUnderline/>
+                      <Input classes={{ root: classes.root_input }} onChange={this.handleQuarterAnalysisChange}  autoFocus disableUnderline/>
                         <Button variant="contained" color="primary" onClick={this.handleQuarterAnalysis}>
                             Submit
                         </Button>
@@ -115,12 +164,12 @@ class Analysis extends React.Component {
                  <h1 style={{marginTop:60}}>Stock Comparison</h1>
                  <div>
                    <span style={{padding:16}}>Symbol 1:</span>
-                      <Input classes={{ root: classes.root_input }} autoFocus disableUnderline/>
+                      <Input classes={{ root: classes.root_input }} onChange={this.handleStockComparsionFirstInputChange} autoFocus disableUnderline/>
                        
                  </div>
                  <div>
                    <span style={{padding:16}}>Symbol 2:</span>
-                      <Input classes={{ root: classes.root_input }} autoFocus disableUnderline/>
+                      <Input classes={{ root: classes.root_input }} onChange={this.handleStockComparsionSecondInputChange} autoFocus disableUnderline/>
                         <Button variant="contained" color="primary" onClick={this.handleStockComparison}>
                             Submit
                         </Button>
@@ -129,7 +178,7 @@ class Analysis extends React.Component {
                )}
                 {isShouldDisplayGraph && isQuarterAnalysisGraph && (
                     <div style={{width:'50%',marginTop:'100px'}}>
-                        <QuarterAnalysisChart handleBack={this.handleBack} />
+                        <QuarterAnalysisChart handleBack={this.handleBack} data={QuarterAnalysisData}/>
                     </div>
                 )}
                  {isShouldDisplayGraph && isMovingAverageGraph && (
@@ -139,7 +188,7 @@ class Analysis extends React.Component {
                 )}
                 {isShouldDisplayGraph && isStockComparisonGraph && (
                     <div style={{width:'50%',marginTop:'100px'}}>
-                        <StockComparisonChart handleBack={this.handleBack} />
+                        <StockComparisonChart handleBack={this.handleBack} data1={stockComparisonFirstData} data2={stockComparisonSecondData}/>
                     </div>
                 )}
           </div>
