@@ -3,7 +3,7 @@ import CanvasJSReact from './canvasjs.react';
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-class QuarterAnalysisChart extends React.Component {
+class FinancialAnalysisChart extends React.Component {
 	constructor() {
 	super();
 	this.toggleDataSeries = this.toggleDataSeries.bind(this);
@@ -19,10 +19,10 @@ toggleDataSeries(e){
 	this.chart.render();
 }
 
-handleQuarterAnalysisData(){
+handleFinancialAnalysisData(){
 	const finalData=[];
-	const quarterAnalysisData =this.props.data;
-	quarterAnalysisData.map((data) => {
+	const financialAnalysisData =this.props.data;
+	financialAnalysisData.map((data) => {
 				let openPrice = data.openPrice;
 				let highPrice = data.highPrice;
 				let lowPrice = data.lowPrice;
@@ -35,17 +35,17 @@ handleQuarterAnalysisData(){
 }
 
 render() {
-	const quarterAnalysisData = this.props.data;
+	const financialAnalysisData = this.props.data;
 	
 	const options = {
 		theme: "light2",
 		animationEnabled: true,
 		exportEnabled: true,
 		title:{
-			text: quarterAnalysisData[0].companyName,
+			text: financialAnalysisData[0].companyName,
 		},
 		axisX: {
-			valueFormatString: "MMMM-YYYY"
+			valueFormatString: "MMM-YYYY"
 		},
 		axisY: {
 			includeZero:false,
@@ -55,10 +55,10 @@ render() {
 		data: [{
 			type: "candlestick",
 			showInLegend: true,
-			name: quarterAnalysisData[0].companyName,
+			name: financialAnalysisData[0].companyName,
 			yValueFormatString: "$###0.00",
 			xValueFormatString: "MMMM-YYYY",
-			dataPoints:this.handleQuarterAnalysisData()
+			dataPoints:this.handleFinancialAnalysisData()
 		},
 		
 	  ]
@@ -75,4 +75,4 @@ render() {
 	);
 }
 }
-export default QuarterAnalysisChart;
+export default FinancialAnalysisChart;

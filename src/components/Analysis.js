@@ -9,11 +9,17 @@ import QuarterAnalysisChart from "./QuarterAnalysisChart";
 import MovingAverageChart from "./MovingAverageChart";
 import StockComparisonChart from "./StockComparisonChart";
 import axios from 'axios';
+import FormControl from '@material-ui/core/FormControl';
+import NativeSelect from '@material-ui/core/NativeSelect';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 const quarterAnalysisBaseUrl = 'http://localhost:8080/stockapp/getCurrentQuarterDetail/';
 const stockComparisonBaseUrl = 'http://localhost:8080/stockapp/getComparisonDetail/';
-
-
+const movingAverageBaseUrl = 'http://localhost:8080/stockapp/getMovingAverageDetail/';
 
 const styles = theme => ({
     root_input:{
@@ -26,11 +32,14 @@ const styles = theme => ({
         height:"40px",
         marginRight:"18px",
       },
+      formControl: {
+        margin: theme.spacing(1),
+        minWidth: 120,
+      },
 });
 class Analysis extends React.Component {
     constructor(){
         super();
-        
     }
     state = { 
         is50Dayschecked: false,
@@ -40,11 +49,16 @@ class Analysis extends React.Component {
         isMovingAverageGraph:false,
         isStockComparisonGraph:false,
         QuarterAnalysisData:[],
+        movingAverageData:[],
         stockComparisonFirstData:[],
         stockComparisonSecondData:[],
         quarterAnalysisInput:'',
         stockComparsionFirstInput:'',
         stockComparsionSecondInput:'',
+        movingAverageInput:'',
+        rangeInput:1,
+        isAlertDialogOpen:false,
+        alertMessage:''
 
      }
      handleCheckBoxChange = (event) => {
@@ -53,6 +67,22 @@ class Analysis extends React.Component {
         } else {
           this.setState({ is200Dayschecked: event.target.checked });
         }
+      };
+
+      handleRangeInput = (event) => {
+        const selectedIndex =  event.target.options.selectedIndex;
+        if(selectedIndex===1){
+          this.setState({ rangeInput: 5 });
+        }
+         
+        if(selectedIndex===2){
+          this.setState({ rangeInput: 10 });
+        }
+          
+        if(selectedIndex===3){
+          this.setState({ rangeInput: 20 });
+        }
+         
       };
 
       handleBack = () => {
@@ -73,17 +103,40 @@ class Analysis extends React.Component {
           const{quarterAnalysisInput} = this.state;
           const quarterAnalysisUrl = quarterAnalysisBaseUrl.concat(quarterAnalysisInput);
         axios.get(quarterAnalysisUrl).then(res=>{
+          if(!res.data.error){
             this.setState({
-                QuarterAnalysisData:res.data.currentQuarterDetail,
-                isShouldDisplayGraph:true,isQuarterAnalysisGraph:true
-            })
+              QuarterAnalysisData:res.data.currentQuarterDetail,
+              isShouldDisplayGraph:true,isQuarterAnalysisGraph:true
+          })
+          }else{
+            this.setState({
+              isAlertDialogOpen:true,
+              alertMessage:res.data.error
+          })
+          }
         })
-        console.log(this.state.QuarterAnalysisData);
       };
 
       
       handleMovingAverage = (event) => {
-        this.setState({ isShouldDisplayGraph: true,isMovingAverageGraph:true });
+        const{movingAverageInput,rangeInput} = this.state;
+          const params = {
+          years:rangeInput
+        };
+        const movingAverageUrl = movingAverageBaseUrl.concat(movingAverageInput);
+      axios.get(movingAverageUrl,{params}).then(res=>{
+        if(!res.data.error){
+          this.setState({
+            movingAverageData:res.data.movingAverageDetail,
+              isShouldDisplayGraph:true,isMovingAverageGraph:true
+          })}
+          else{
+            this.setState({
+              isAlertDialogOpen:true,
+              alertMessage:res.data.error
+          })
+        }
+      })
       };
 
       
@@ -92,11 +145,18 @@ class Analysis extends React.Component {
         const stockComparisonUrl = stockComparisonBaseUrl.concat(stockComparsionFirstInput)
                                    .concat('/').concat(stockComparsionSecondInput);
             axios.get(stockComparisonUrl).then(res=>{
+              if(!res.data.error){
                 this.setState({
                     stockComparisonFirstData:res.data.symbol1,
                     stockComparisonSecondData:res.data.symbol2,
                     isShouldDisplayGraph:true,isStockComparisonGraph:true
+                })}
+                else{
+                  this.setState({
+                    isAlertDialogOpen:true,
+                    alertMessage:res.data.error
                 })
+              }
             })
       };
 
@@ -110,14 +170,27 @@ class Analysis extends React.Component {
       this.setState({ stockComparsionFirstInput: inputValue});
     };
 
+    
+
     handleStockComparsionSecondInputChange = (event) => {
         const inputValue = event.target.value;
       this.setState({ stockComparsionSecondInput: inputValue});
     };
 
+    handleMovingAverageInputChange = (event) => {
+      const inputValue = event.target.value;
+    this.setState({ movingAverageInput: inputValue});
+  };
+
+  handleClose = () => {
+  this.setState({ isAlertDialogOpen : false,alertMessage:''});
+};
+
     render() {
         const {
-            QuarterAnalysisData,stockComparisonFirstData,stockComparisonSecondData,is50Dayschecked,is200Dayschecked,isShouldDisplayGraph,isQuarterAnalysisGraph,isMovingAverageGraph,isStockComparisonGraph
+          rangeInput,QuarterAnalysisData,movingAverageData,stockComparisonFirstData,stockComparisonSecondData,is50Dayschecked,
+          is200Dayschecked,isShouldDisplayGraph,isQuarterAnalysisGraph,isMovingAverageGraph,isStockComparisonGraph,isAlertDialogOpen,alertMessage
+          
         } = this.state;
         const { classes } = this.props;
         return (
@@ -134,6 +207,20 @@ class Analysis extends React.Component {
                  </div>
                  <h1 style={{marginTop:60}}>Stock Trend</h1>
                  <div>
+                   <div style={{display:'flex',alignItems:'center'}}>
+                    <span style={{padding:16}}>Range:</span>
+                      <FormControl className={classes.formControl}>
+                        <NativeSelect
+                          defaultValue={1}
+                          onChange={this.handleRangeInput}
+                        >
+                          <option value={1}>1 year</option>
+                          <option value={5}>5 Year</option>
+                          <option value={10}>10 Year</option>
+                          <option value={20}>20 Year</option>
+                        </NativeSelect>
+                      </FormControl>
+                     </div> 
                     <FormGroup>
                       <FormControlLabel control={
                         <Checkbox
@@ -156,7 +243,7 @@ class Analysis extends React.Component {
                     />
               </FormGroup>
                    <span style={{padding:16}}>Symbol:</span>
-                      <Input classes={{ root: classes.root_input }} autoFocus disableUnderline/>
+                      <Input classes={{ root: classes.root_input }} onChange={this.handleMovingAverageInputChange} autoFocus disableUnderline/>
                         <Button variant="contained" color="primary" onClick={this.handleMovingAverage}>
                             Submit
                         </Button>
@@ -183,7 +270,7 @@ class Analysis extends React.Component {
                 )}
                  {isShouldDisplayGraph && isMovingAverageGraph && (
                     <div style={{width:'50%',marginTop:'100px'}}>
-                        <MovingAverageChart handleBack={this.handleBack} />
+                        <MovingAverageChart handleBack={this.handleBack} fiftyDaysAverage={is50Dayschecked} twoHundredDaysAverage={is200Dayschecked} data={movingAverageData}/>
                     </div>
                 )}
                 {isShouldDisplayGraph && isStockComparisonGraph && (
@@ -191,6 +278,24 @@ class Analysis extends React.Component {
                         <StockComparisonChart handleBack={this.handleBack} data1={stockComparisonFirstData} data2={stockComparisonSecondData}/>
                     </div>
                 )}
+                    <Dialog
+                      open={isAlertDialogOpen}
+                      onClose={this.handleClose}
+                      aria-labelledby="alert-dialog-title"
+                      aria-describedby="alert-dialog-description"
+                    >
+                      <DialogTitle id="alert-dialog-title">{"Alert !"}</DialogTitle>
+                      <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                         {alertMessage}
+                        </DialogContentText>
+                      </DialogContent>
+                      <DialogActions>
+                        <Button color="primary" onClick={this.handleClose}>
+                         Close
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
           </div>
         );
       }
