@@ -34,20 +34,13 @@ class FinancialAnalysisTable extends React.Component {
 }
 
 render() {
-	const { classes } = this.props;
-	const rows=[];
-	const financialAnalysisData =this.props.data;
-	financialAnalysisData.map((data) => {
-	  let tempData ={companyName:data.companyName,glPerLot:data.glPerLot,glPerShare:data.glPerShare,
-					  glPercentage:data.glPercentage,lotSize:data.lotSize,month:data.month,symbol:data.symbol,year:data.year};
-					  rows.push(tempData);
-	});
-
+	const { classes,data } = this.props;
 	return (
 	<div>
      	<h1 className="cursor-pointer underline text-3xl" onClick={this.props.handleBack}>
           Back
         </h1>
+		<p className="text-5xl">{data[0].companyName}</p>
 		<TableContainer component={Paper}>
       <Table aria-label="customized table">
         <TableHead>
@@ -62,7 +55,7 @@ render() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {data.map((row) => (
             <StyledTableRow key={row.symbol}>
               <StyledTableCell component="th" scope="row">{row.symbol}</StyledTableCell>
               <StyledTableCell align="center">{row.year}</StyledTableCell>
