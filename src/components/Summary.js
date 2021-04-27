@@ -5,9 +5,11 @@ import FormControl from "@material-ui/core/FormControl";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-import TextField from "@material-ui/core/TextField";
+import { Input } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import SummaryTable from "./SummaryTable";
+import Alert from "@material-ui/lab/Alert";
+import axios from "axios";
 
 const styles = (theme) => ({
   root: {
@@ -16,13 +18,28 @@ const styles = (theme) => ({
   formControl: {
     margin: theme.spacing(3),
   },
+  root_input: {
+    paddingLeft: "8px",
+    background: "#FFFFFF 0% 0% no-repeat padding-box",
+    border: "1px solid grey",
+    borderRadius: "5px",
+    font: "normal normal 300 17px/35px Roboto",
+    color: "grey",
+    height: "40px",
+    marginRight: "18px",
+  },
 });
+
+const summaryBaseUrl = "http://localhost:8080/stockapp/getSummaryDetail/";
 
 class Summary extends React.Component {
   state = {
     isHighestPriceChecked: false,
     isHighestVolumeChecked: false,
+    symbol: "",
     shouldDisplayTable: false,
+    summaryTableData: {},
+    errorMessage: "",
   };
 
   handleCheckBoxChange = (event) => {
@@ -34,11 +51,35 @@ class Summary extends React.Component {
   };
 
   handleSubmit = (event) => {
-    this.setState({ shouldDisplayTable: true });
+    const { symbol } = this.state;
+    if (symbol === "") {
+      this.setState({
+        errorMessage: "Please enter the Symbol and click Submit",
+      });
+    } else {
+      axios.get(`${summaryBaseUrl}${symbol}`).then((res) => {
+        if (res.data.error) {
+          this.setState({
+            errorMessage: res.data.error,
+          });
+        } else {
+          this.setState({
+            summaryTableData: res.data.summaryDetail,
+            shouldDisplayTable: true,
+            errorMessage: "",
+          });
+        }
+      });
+    }
   };
 
   handleBack = () => {
     this.setState({ shouldDisplayTable: false });
+  };
+
+  handleSymbolInputChange = (event) => {
+    const inputValue = event.target.value;
+    this.setState({ symbol: inputValue, errorMessage: "" });
   };
 
   render() {
@@ -46,6 +87,9 @@ class Summary extends React.Component {
       isHighestPriceChecked,
       isHighestVolumeChecked,
       shouldDisplayTable,
+      summaryTableData,
+      errorMessage,
+      symbol,
     } = this.state;
     const { classes } = this.props;
     return (
@@ -78,12 +122,16 @@ class Summary extends React.Component {
               </FormGroup>
               {/* <FormHelperText>Be careful</FormHelperText> */}
             </FormControl>
-            <TextField
-              id="outlined-search"
-              label="Symbol"
-              type="search"
-              variant="outlined"
-            />
+            <div>
+              <span style={{ padding: 16 }}>Symbol:</span>
+              <Input
+                classes={{ root: classes.root_input }}
+                value={symbol}
+                autoFocus
+                disableUnderline
+                onChange={this.handleSymbolInputChange}
+              />
+            </div>
             <Button
               variant="contained"
               color="primary"
@@ -91,11 +139,19 @@ class Summary extends React.Component {
             >
               Submit
             </Button>
+            {errorMessage !== "" && (
+              <Alert severity="error">{errorMessage}</Alert>
+            )}
           </div>
         )}
         {shouldDisplayTable && (
           <div className="flex flex-col justify-center mt-10 space-y-2">
-            <SummaryTable handleBack={this.handleBack} />
+            <SummaryTable
+              handleBack={this.handleBack}
+              data={summaryTableData}
+              isHighestVolumeChecked={isHighestVolumeChecked}
+              isHighestPriceChecked={isHighestPriceChecked}
+            />
           </div>
         )}
       </div>
