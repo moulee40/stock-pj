@@ -141,6 +141,7 @@ class Financial extends React.Component {
       isShouldDisplayGraph: false,
       isShowResultGraph: false,
       isShowResultTable: false,
+      alertMessage: "",
     });
   };
 
@@ -170,17 +171,17 @@ class Financial extends React.Component {
 
   analysisGraphInputChange = (event) => {
     const inputValue = event.target.value;
-    this.setState({ graphAnalysisInput: inputValue });
+    this.setState({ graphAnalysisInput: inputValue, alertMessage: "" });
   };
 
   analysisTableInputChange = (event) => {
     const inputValue = event.target.value;
-    this.setState({ tableAnalysisInput: inputValue });
+    this.setState({ tableAnalysisInput: inputValue, alertMessage: "" });
   };
 
   analysisTableLotInputChange = (event) => {
     const inputValue = event.target.value;
-    this.setState({ tableAnalysisLotInput: inputValue });
+    this.setState({ tableAnalysisLotInput: inputValue, alertMessage: "" });
   };
 
   render() {

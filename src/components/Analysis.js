@@ -87,6 +87,7 @@ class Analysis extends React.Component {
       isQuarterAnalysisGraph: false,
       isMovingAverageGraph: false,
       isStockComparisonGraph: false,
+      alertMessage: "",
     });
   };
 
