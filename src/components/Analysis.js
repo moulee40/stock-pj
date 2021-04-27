@@ -11,11 +11,6 @@ import StockComparisonChart from "./StockComparisonChart";
 import axios from "axios";
 import FormControl from "@material-ui/core/FormControl";
 import NativeSelect from "@material-ui/core/NativeSelect";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import Alert from "@material-ui/lab/Alert";
 
 const quarterAnalysisBaseUrl =
@@ -61,7 +56,6 @@ class Analysis extends React.Component {
     stockComparsionSecondInput: "",
     movingAverageInput: "",
     rangeInput: 1,
-    isAlertDialogOpen: false,
     alertMessage: "",
   };
   handleCheckBoxChange = (event) => {
@@ -93,10 +87,6 @@ class Analysis extends React.Component {
       isQuarterAnalysisGraph: false,
       isMovingAverageGraph: false,
       isStockComparisonGraph: false,
-      quarterAnalysisInput: "",
-      stockComparsionFirstInput: "",
-      stockComparsionSecondInput: "",
-      movingAverageInput: "",
     });
   };
 
@@ -106,45 +96,55 @@ class Analysis extends React.Component {
 
   handleQuarterAnalysis = (event) => {
     const { quarterAnalysisInput } = this.state;
-    const quarterAnalysisUrl = quarterAnalysisBaseUrl.concat(
-      quarterAnalysisInput
-    );
-    axios.get(quarterAnalysisUrl).then((res) => {
-      if (!res.data.error) {
-        this.setState({
-          QuarterAnalysisData: res.data.currentQuarterDetail,
-          isShouldDisplayGraph: true,
-          isQuarterAnalysisGraph: true,
-        });
-      } else {
-        this.setState({
-          isAlertDialogOpen: true,
-          alertMessage: res.data.error,
-        });
-      }
-    });
+    if (quarterAnalysisInput === "") {
+      this.setState({
+        alertMessage: "Please enter the Symbol and click Submit",
+      });
+    } else {
+      const quarterAnalysisUrl = quarterAnalysisBaseUrl.concat(
+        quarterAnalysisInput
+      );
+      axios.get(quarterAnalysisUrl).then((res) => {
+        if (!res.data.error) {
+          this.setState({
+            QuarterAnalysisData: res.data.currentQuarterDetail,
+            isShouldDisplayGraph: true,
+            isQuarterAnalysisGraph: true,
+          });
+        } else {
+          this.setState({
+            alertMessage: res.data.error,
+          });
+        }
+      });
+    }
   };
 
   handleMovingAverage = (event) => {
     const { movingAverageInput, rangeInput } = this.state;
-    const params = {
-      years: rangeInput,
-    };
-    const movingAverageUrl = movingAverageBaseUrl.concat(movingAverageInput);
-    axios.get(movingAverageUrl, { params }).then((res) => {
-      if (!res.data.error) {
-        this.setState({
-          movingAverageData: res.data.movingAverageDetail,
-          isShouldDisplayGraph: true,
-          isMovingAverageGraph: true,
-        });
-      } else {
-        this.setState({
-          isAlertDialogOpen: true,
-          alertMessage: res.data.error,
-        });
-      }
-    });
+    if (movingAverageInput === "") {
+      this.setState({
+        alertMessage: "Please enter the Symbol and click Submit",
+      });
+    } else {
+      const params = {
+        years: rangeInput,
+      };
+      const movingAverageUrl = movingAverageBaseUrl.concat(movingAverageInput);
+      axios.get(movingAverageUrl, { params }).then((res) => {
+        if (!res.data.error) {
+          this.setState({
+            movingAverageData: res.data.movingAverageDetail,
+            isShouldDisplayGraph: true,
+            isMovingAverageGraph: true,
+          });
+        } else {
+          this.setState({
+            alertMessage: res.data.error,
+          });
+        }
+      });
+    }
   };
 
   handleStockComparison = (event) => {
@@ -152,54 +152,62 @@ class Analysis extends React.Component {
       stockComparsionFirstInput,
       stockComparsionSecondInput,
     } = this.state;
-    const stockComparisonUrl = stockComparisonBaseUrl
-      .concat(stockComparsionFirstInput)
-      .concat("/")
-      .concat(stockComparsionSecondInput);
-    axios.get(stockComparisonUrl).then((res) => {
-      if (!res.data.error) {
-        this.setState({
-          stockComparisonFirstData: res.data.symbol1,
-          stockComparisonSecondData: res.data.symbol2,
-          isShouldDisplayGraph: true,
-          isStockComparisonGraph: true,
-        });
-      } else {
-        this.setState({
-          isAlertDialogOpen: true,
-          alertMessage: res.data.error,
-        });
-      }
-    });
+    if (stockComparsionFirstInput === "" && stockComparsionSecondInput === "") {
+      this.setState({
+        alertMessage: "Please enter the Symbol 1 and Symbol 2 and click Submit",
+      });
+    } else if (stockComparsionFirstInput === "") {
+      this.setState({
+        alertMessage: "Please enter the Symbol 1 and click Submit",
+      });
+    } else if (stockComparsionSecondInput === "") {
+      this.setState({
+        alertMessage: "Please enter the Symbol 2 and click Submit",
+      });
+    } else {
+      const stockComparisonUrl = stockComparisonBaseUrl
+        .concat(stockComparsionFirstInput)
+        .concat("/")
+        .concat(stockComparsionSecondInput);
+      axios.get(stockComparisonUrl).then((res) => {
+        if (!res.data.error) {
+          this.setState({
+            stockComparisonFirstData: res.data.symbol1,
+            stockComparisonSecondData: res.data.symbol2,
+            isShouldDisplayGraph: true,
+            isStockComparisonGraph: true,
+          });
+        } else {
+          this.setState({
+            alertMessage: res.data.error,
+          });
+        }
+      });
+    }
   };
 
   handleQuarterAnalysisChange = (event) => {
     const inputValue = event.target.value;
-    this.setState({ quarterAnalysisInput: inputValue });
+    this.setState({ quarterAnalysisInput: inputValue, alertMessage: "" });
   };
 
   handleStockComparsionFirstInputChange = (event) => {
     const inputValue = event.target.value;
-    this.setState({ stockComparsionFirstInput: inputValue });
+    this.setState({ stockComparsionFirstInput: inputValue, alertMessage: "" });
   };
 
   handleStockComparsionSecondInputChange = (event) => {
     const inputValue = event.target.value;
-    this.setState({ stockComparsionSecondInput: inputValue });
+    this.setState({ stockComparsionSecondInput: inputValue, alertMessage: "" });
   };
 
   handleMovingAverageInputChange = (event) => {
     const inputValue = event.target.value;
-    this.setState({ movingAverageInput: inputValue });
-  };
-
-  handleClose = () => {
-    this.setState({ isAlertDialogOpen: false, alertMessage: "" });
+    this.setState({ movingAverageInput: inputValue, alertMessage: "" });
   };
 
   render() {
     const {
-      rangeInput,
       QuarterAnalysisData,
       movingAverageData,
       stockComparisonFirstData,
@@ -210,7 +218,10 @@ class Analysis extends React.Component {
       isQuarterAnalysisGraph,
       isMovingAverageGraph,
       isStockComparisonGraph,
-      isAlertDialogOpen,
+      quarterAnalysisInput,
+      stockComparsionFirstInput,
+      stockComparsionSecondInput,
+      movingAverageInput,
       alertMessage,
     } = this.state;
     const { classes } = this.props;
@@ -225,6 +236,7 @@ class Analysis extends React.Component {
               <span className="text-xl mr-4">Symbol</span>
               <Input
                 classes={{ root: classes.root_input }}
+                value={quarterAnalysisInput}
                 onChange={this.handleQuarterAnalysisChange}
                 autoFocus
                 disableUnderline
@@ -283,6 +295,7 @@ class Analysis extends React.Component {
                 <span className="text-xl mr-4 ml-6">Symbol</span>
                 <Input
                   classes={{ root: classes.root_input }}
+                  value={movingAverageInput}
                   onChange={this.handleMovingAverageInputChange}
                   autoFocus
                   disableUnderline
@@ -303,6 +316,7 @@ class Analysis extends React.Component {
               <span className="text-xl mr-4">Symbol 1</span>
               <Input
                 classes={{ root: classes.root_input }}
+                value={stockComparsionFirstInput}
                 onChange={this.handleStockComparsionFirstInputChange}
                 autoFocus
                 disableUnderline
@@ -312,6 +326,7 @@ class Analysis extends React.Component {
               <span className="text-xl mr-4">Symbol 2</span>
               <Input
                 classes={{ root: classes.root_input }}
+                value={stockComparsionSecondInput}
                 onChange={this.handleStockComparsionSecondInputChange}
                 autoFocus
                 disableUnderline
@@ -324,11 +339,11 @@ class Analysis extends React.Component {
                 Submit
               </Button>
             </div>
-            {
+            {alertMessage !== "" && (
               <Alert className="mt-5" severity="warning">
-                Checking the error message
+                {alertMessage}
               </Alert>
-            }
+            )}
           </div>
         )}
         {isShouldDisplayGraph && isQuarterAnalysisGraph && (
@@ -358,24 +373,6 @@ class Analysis extends React.Component {
             />
           </div>
         )}
-        {/* <Dialog
-          open={isAlertDialogOpen}
-          onClose={this.handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">{"Alert !"}</DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              {alertMessage}
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button color="primary" onClick={this.handleClose}>
-              Close
-            </Button>
-          </DialogActions>
-        </Dialog> */}
       </div>
     );
   }

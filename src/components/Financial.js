@@ -62,32 +62,36 @@ class Financial extends React.Component {
     tableAnalysisInput: "",
     graphAnalysisData: [],
     tableAnalysisData: [],
-    isAlertDialogOpen: false,
     alertMessage: "",
     tableAnalysisLotInput: "",
   };
 
   graphAnalysis = (event) => {
     const { graphAnalysisInput, graphFromDate, graphToDate } = this.state;
-    const params = {
-      fromDate: graphFromDate,
-      toDate: graphToDate,
-    };
-    const graphAnalysisUrl = graphAnalysisBaseUrl.concat(graphAnalysisInput);
-    axios.get(graphAnalysisUrl, { params }).then((res) => {
-      if (!res.data.error) {
-        this.setState({
-          graphAnalysisData: res.data.financialDetail,
-          isShouldDisplayGraph: true,
-          isShowResultGraph: true,
-        });
-      } else {
-        this.setState({
-          isAlertDialogOpen: true,
-          alertMessage: res.data.error,
-        });
-      }
-    });
+    if (graphAnalysisInput === "") {
+      this.setState({
+        alertMessage: "Please enter the Symbol and click Submit",
+      });
+    } else {
+      const params = {
+        fromDate: graphFromDate,
+        toDate: graphToDate,
+      };
+      const graphAnalysisUrl = graphAnalysisBaseUrl.concat(graphAnalysisInput);
+      axios.get(graphAnalysisUrl, { params }).then((res) => {
+        if (!res.data.error) {
+          this.setState({
+            graphAnalysisData: res.data.financialDetail,
+            isShouldDisplayGraph: true,
+            isShowResultGraph: true,
+          });
+        } else {
+          this.setState({
+            alertMessage: res.data.error,
+          });
+        }
+      });
+    }
   };
 
   tableAnalysis = (event) => {
@@ -97,26 +101,39 @@ class Financial extends React.Component {
       tableToDate,
       tableAnalysisLotInput,
     } = this.state;
-    const params = {
-      fromDate: tableFromDate,
-      toDate: tableToDate,
-      lotSize: tableAnalysisLotInput,
-    };
-    const tableAnalysisUrl = tableAnalysisBaseUrl.concat(tableAnalysisInput);
-    axios.get(tableAnalysisUrl, { params }).then((res) => {
-      if (!res.data.error) {
-        this.setState({
-          tableAnalysisData: res.data.monthlyReportDetail,
-          isShouldDisplayGraph: true,
-          isShowResultTable: true,
-        });
-      } else {
-        this.setState({
-          isAlertDialogOpen: true,
-          alertMessage: res.data.error,
-        });
-      }
-    });
+    if (tableAnalysisInput === "" && tableAnalysisLotInput === "") {
+      this.setState({
+        alertMessage: "Please enter the Symbol and Lot Size and click Submit",
+      });
+    } else if (tableAnalysisInput === "") {
+      this.setState({
+        alertMessage: "Please enter the Symbol and click Submit",
+      });
+    } else if (tableAnalysisLotInput === "") {
+      this.setState({
+        alertMessage: "Please enter the Lot Size and click Submit",
+      });
+    } else {
+      const params = {
+        fromDate: tableFromDate,
+        toDate: tableToDate,
+        lotSize: tableAnalysisLotInput,
+      };
+      const tableAnalysisUrl = tableAnalysisBaseUrl.concat(tableAnalysisInput);
+      axios.get(tableAnalysisUrl, { params }).then((res) => {
+        if (!res.data.error) {
+          this.setState({
+            tableAnalysisData: res.data.monthlyReportDetail,
+            isShouldDisplayGraph: true,
+            isShowResultTable: true,
+          });
+        } else {
+          this.setState({
+            alertMessage: res.data.error,
+          });
+        }
+      });
+    }
   };
 
   handleBack = () => {
@@ -166,21 +183,17 @@ class Financial extends React.Component {
     this.setState({ tableAnalysisLotInput: inputValue });
   };
 
-  handleClose = () => {
-    this.setState({ isAlertDialogOpen: false, alertMessage: "" });
-  };
-
   render() {
     const {
       isShouldDisplayGraph,
       isShowResultTable,
-      graphFromDate,
-      graphToDate,
       graphAnalysisData,
-      isAlertDialogOpen,
       alertMessage,
       isShowResultGraph,
       tableAnalysisData,
+      graphAnalysisInput,
+      tableAnalysisInput,
+      tableAnalysisLotInput,
     } = this.state;
     const { classes } = this.props;
     return (
@@ -217,6 +230,7 @@ class Financial extends React.Component {
               <Input
                 classes={{ root: classes.root_input }}
                 onChange={this.analysisGraphInputChange}
+                value={graphAnalysisInput}
                 autoFocus
                 disableUnderline
               />
@@ -259,6 +273,7 @@ class Financial extends React.Component {
               <Input
                 classes={{ root: classes.root_input }}
                 onChange={this.analysisTableInputChange}
+                value={tableAnalysisInput}
                 autoFocus
                 disableUnderline
               />
@@ -267,6 +282,7 @@ class Financial extends React.Component {
               <span className="text-xl mr-4">Lot Size</span>
               <Input
                 classes={{ root: classes.root_input }}
+                value={tableAnalysisLotInput}
                 onChange={this.analysisTableLotInputChange}
                 autoFocus
                 disableUnderline
@@ -279,11 +295,11 @@ class Financial extends React.Component {
                 Submit
               </Button>
             </div>
-            {
+            {alertMessage !== "" && (
               <Alert className="mt-5" severity="warning">
-                Checking the error message
+                {alertMessage}
               </Alert>
-            }
+            )}
           </div>
         )}
         {isShouldDisplayGraph && isShowResultGraph && (
