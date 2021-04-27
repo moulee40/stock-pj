@@ -109,6 +109,10 @@ class Financial extends React.Component {
   //   })
   // }
   // })
+  this.setState({
+      isShouldDisplayGraph:true,
+      isShowResultTable:true
+  })
 };
 
   handleBack = () => {
