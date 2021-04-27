@@ -15,9 +15,6 @@ const styles = (theme) => ({
   root: {
     display: "flex",
   },
-  formControl: {
-    margin: theme.spacing(3),
-  },
   root_input: {
     paddingLeft: "8px",
     background: "#FFFFFF 0% 0% no-repeat padding-box",
@@ -95,16 +92,19 @@ class Summary extends React.Component {
     return (
       <div className="flex justify-center">
         {!shouldDisplayTable && (
-          <div className="flex flex-col justify-center mt-10 space-y-2">
-            <FormControl component="fieldset" className={classes.formControl}>
-              <FormLabel component="legend">Information</FormLabel>
-              <FormGroup>
+          <div className="flex flex-col justify-center mt-10">
+            <p className="text-2xl font-semibold text-indigo-900">
+              Information
+            </p>
+            <FormControl component="fieldset">
+              <FormGroup className="mt-5 ml-6">
                 <FormControlLabel
                   control={
                     <Checkbox
                       checked={isHighestPriceChecked}
                       onChange={this.handleCheckBoxChange}
                       name="Highest Price"
+                      color="primary"
                     />
                   }
                   label="Highest Price"
@@ -115,6 +115,7 @@ class Summary extends React.Component {
                       checked={isHighestVolumeChecked}
                       onChange={this.handleCheckBoxChange}
                       name="Highest Volume"
+                      color="primary"
                     />
                   }
                   label="Highest Volume"
@@ -122,8 +123,8 @@ class Summary extends React.Component {
               </FormGroup>
               {/* <FormHelperText>Be careful</FormHelperText> */}
             </FormControl>
-            <div>
-              <span style={{ padding: 16 }}>Symbol:</span>
+            <div className="flex items-center mt-6">
+              <p className="text-xl mr-4">Symbol</p>
               <Input
                 classes={{ root: classes.root_input }}
                 value={symbol}
@@ -131,16 +132,18 @@ class Summary extends React.Component {
                 disableUnderline
                 onChange={this.handleSymbolInputChange}
               />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.handleSubmit}
+              >
+                Submit
+              </Button>
             </div>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handleSubmit}
-            >
-              Submit
-            </Button>
             {errorMessage !== "" && (
-              <Alert severity="error">{errorMessage}</Alert>
+              <Alert className="mt-5" severity="warning">
+                {errorMessage}
+              </Alert>
             )}
           </div>
         )}

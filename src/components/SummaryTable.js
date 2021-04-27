@@ -59,7 +59,13 @@ class SummaryTable extends React.Component {
       },
     ];
     return (
-      <div className="space-y-14">
+      <div className="space-y-12">
+        <p
+          className="max-w-min cursor-pointer underline text-2xl text-indigo-900 hover:text-purple-800"
+          onClick={handleBack}
+        >
+          Back
+        </p>
         <TableContainer component={Paper}>
           <Table className={classes.table} aria-label="customized table">
             <TableHead>
@@ -82,9 +88,6 @@ class SummaryTable extends React.Component {
             </TableBody>
           </Table>
         </TableContainer>
-        <h1 className="cursor-pointer underline text-3xl" onClick={handleBack}>
-          Back
-        </h1>
       </div>
     );
   }

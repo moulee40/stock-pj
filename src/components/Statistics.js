@@ -12,6 +12,7 @@ import FormLabel from "@material-ui/core/FormLabel";
 import StatisticsTable from "./StatisticsTable";
 import { Input } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
+import NativeSelect from "@material-ui/core/NativeSelect";
 import axios from "axios";
 
 const styles = (theme) => ({
@@ -104,53 +105,54 @@ class Statistics extends React.Component {
     return (
       <div className="flex justify-center">
         {!shouldDisplayTable && (
-          <div className="flex flex-col justify-center mt-10 space-y-2">
-            <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel id="demo-simple-select-outlined-label">
-                Display
-              </InputLabel>
-              <Select
-                labelId="demo-simple-select-outlined-label"
-                id="demo-simple-select-outlined"
-                value={count}
-                onChange={this.handleDisplayChange}
-                label="Display"
-              >
-                <MenuItem value={10}>Last 10</MenuItem>
-                <MenuItem value={100}>Last 100</MenuItem>
-                <MenuItem value={200}>Last 250</MenuItem>
-              </Select>
-            </FormControl>
-
+          <div className="flex flex-col justify-center mt-10 ">
+            <p className="text-2xl font-semibold text-indigo-900">Exchange</p>
             <FormControl component="fieldset">
-              <FormLabel component="legend">Exchange</FormLabel>
               <RadioGroup
+                className="ml-6 mt-5"
                 aria-label="exchange"
                 name="exchange1"
                 value={exchangeValue}
                 onChange={this.handleExchangeRadioButton}
               >
-                <FormControlLabel value="ALL" control={<Radio />} label="ALL" />
+                <FormControlLabel
+                  value="ALL"
+                  control={<Radio color="primary" />}
+                  label="ALL"
+                />
                 <FormControlLabel
                   value="AMEX"
-                  control={<Radio />}
+                  control={<Radio color="primary" />}
                   label="AMEX"
                 />
                 <FormControlLabel
                   value="NYSE"
-                  control={<Radio />}
+                  control={<Radio color="primary" />}
                   label="NYSE"
                 />
                 <FormControlLabel
                   value="NASDAQ"
-                  control={<Radio />}
+                  control={<Radio color="primary" />}
                   label="NASDAQ"
                 />
               </RadioGroup>
             </FormControl>
+            <div className="flex items-center mt-1">
+              <p className="text-xl">Display</p>
+              <FormControl className={classes.formControl}>
+                <NativeSelect
+                  defaultValue={10}
+                  onChange={this.handleDisplayChange}
+                >
+                  <option value={10}>Last 10 Days</option>
+                  <option value={100}>Last 100 Days</option>
+                  <option value={250}>Last 250 Days</option>
+                </NativeSelect>
+              </FormControl>
+            </div>
 
-            <div>
-              <span style={{ padding: 16 }}>Symbol:</span>
+            <div className="flex items-center mt-3">
+              <span className="text-xl mr-4">Symbol</span>
               <Input
                 classes={{ root: classes.root_input }}
                 value={symbol}
@@ -158,16 +160,18 @@ class Statistics extends React.Component {
                 disableUnderline
                 onChange={this.handleSymbolInputChange}
               />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.handleSubmit}
+              >
+                Submit
+              </Button>
             </div>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handleSubmit}
-            >
-              Submit
-            </Button>
             {errorMessage !== "" && (
-              <Alert severity="error">{errorMessage}</Alert>
+              <Alert className="mt-5" severity="warning">
+                {errorMessage}
+              </Alert>
             )}
           </div>
         )}
