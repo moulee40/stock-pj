@@ -16,6 +16,8 @@ import NativeSelect from '@material-ui/core/NativeSelect';
 
 
 const graphAnalysisBaseUrl = 'http://localhost:8080/stockapp/getFinancialReportDetail/';
+const tableAnalysisBaseUrl = 'http://localhost:8080/stockapp/getMonthlyFinancialDetail/';
+
 
 
 const styles = theme => ({
@@ -89,29 +91,25 @@ class Financial extends React.Component {
   };
 
   tableAnalysis = (event) => {
-  //   const{graphAnalysisInput,graphFromDate,graphToDate} = this.state;
-  //   const params = {
-  //     fromDate:graphFromDate,toDate:graphToDate
-  //   };
-  //   const graphAnalysisUrl = graphAnalysisBaseUrl.concat(graphAnalysisInput);
-  // axios.get(graphAnalysisUrl,{params}).then(res=>{
-  //   if(!res.data.error){
-  //     this.setState({
-  //       graphAnalysisData:res.data.financialDetail,
-  //         isShouldDisplayGraph:true,
-  //         isShowResultTable:true
-  //     })
-  //   }
-  //   else{
-  //     this.setState({
-  //       isAlertDialogOpen:true,
-  //       alertMessage:res.data.error
-  //   })
-  // }
-  // })
-  this.setState({
-      isShouldDisplayGraph:true,
-      isShowResultTable:true
+    const{tableAnalysisInput,tableFromDate,tableToDate,tableAnalysisLotInput} = this.state;
+    const params = {
+      fromDate:tableFromDate,toDate:tableToDate,lotSize:tableAnalysisLotInput
+    };
+    const tableAnalysisUrl = tableAnalysisBaseUrl.concat(tableAnalysisInput);
+  axios.get(tableAnalysisUrl,{params}).then(res=>{
+    if(!res.data.error){
+      this.setState({
+        tableAnalysisData:res.data.monthlyReportDetail,
+          isShouldDisplayGraph:true,
+          isShowResultTable:true
+      })
+    }
+    else{
+      this.setState({
+        isAlertDialogOpen:true,
+        alertMessage:res.data.error
+    })
+  }
   })
 };
 
@@ -171,7 +169,7 @@ handleClose = () => {
     
     render() {
         const {
-          isShouldDisplayGraph,isShowResultTable,graphFromDate,graphToDate,graphAnalysisData,isAlertDialogOpen,alertMessage,isShowResultGraph
+          isShouldDisplayGraph,isShowResultTable,graphFromDate,graphToDate,graphAnalysisData,isAlertDialogOpen,alertMessage,isShowResultGraph,tableAnalysisData
         } = this.state;
         const { classes } = this.props;
         return (
@@ -252,7 +250,7 @@ handleClose = () => {
                 )}
                 {isShouldDisplayGraph && isShowResultTable && (
                     <div style={{width:'50%',marginTop:'100px'}}>
-                        <FinancialAnalysisTable handleBack={this.handleBack} />
+                        <FinancialAnalysisTable handleBack={this.handleBack} data={tableAnalysisData}/>
                     </div>
                 )}
                 <Dialog

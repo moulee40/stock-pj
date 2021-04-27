@@ -25,31 +25,23 @@ const StyledTableCell = withStyles((theme) => ({
 	},
   }))(TableRow);
 
-  function createData(name, calories, fat, carbs, protein) {
-	return { name, calories, fat, carbs, protein };
-  }
+
   
-  const rows = [
-	// createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-	// createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-	// createData('Eclair', 262, 16.0, 24, 6.0),
-	// createData('Cupcake', 305, 3.7, 67, 4.3),
-	// createData('Gingerbread', 356, 16.0, 49, 3.9),
-	{symbol:'APPL',year:'2018',month:'04',perShare:'$4',percentage:'20%',lotSize:'20',lotShare:'$80'},
-	{symbol:'APPL',year:'2018',month:'04',perShare:'$4',percentage:'20%',lotSize:'20',lotShare:'$80'},
-	{symbol:'APPL',year:'2018',month:'04',perShare:'$4',percentage:'20%',lotSize:'20',lotShare:'$80'},
-	{symbol:'APPL',year:'2018',month:'04',perShare:'$4',percentage:'20%',lotSize:'20',lotShare:'$80'},
-	{symbol:'APPL',year:'2018',month:'04',perShare:'$4',percentage:'20%',lotSize:'20',lotShare:'$80'}
-  ];
 
 class FinancialAnalysisTable extends React.Component {
 	constructor() {
 	super();
-	// this.toggleDataSeries = this.toggleDataSeries.bind(this);
 }
 
 render() {
 	const { classes } = this.props;
+	const rows=[];
+	const financialAnalysisData =this.props.data;
+	financialAnalysisData.map((data) => {
+	  let tempData ={companyName:data.companyName,glPerLot:data.glPerLot,glPerShare:data.glPerShare,
+					  glPercentage:data.glPercentage,lotSize:data.lotSize,month:data.month,symbol:data.symbol,year:data.year};
+					  rows.push(tempData);
+	});
 
 	return (
 	<div>
@@ -75,10 +67,10 @@ render() {
               <StyledTableCell component="th" scope="row">{row.symbol}</StyledTableCell>
               <StyledTableCell align="center">{row.year}</StyledTableCell>
               <StyledTableCell align="center">{row.month}</StyledTableCell>
-              <StyledTableCell align="center">{row.perShare}</StyledTableCell>
-              <StyledTableCell align="center">{row.percentage}</StyledTableCell>
+              <StyledTableCell align="center">{row.glPerShare}</StyledTableCell>
+              <StyledTableCell align="center">{row.glPercentage}</StyledTableCell>
 			  <StyledTableCell align="center">{row.lotSize}</StyledTableCell>
-			  <StyledTableCell align="center">{row.lotShare}</StyledTableCell>
+			  <StyledTableCell align="center">{row.glPerLot}</StyledTableCell>
             </StyledTableRow>
           ))}
         </TableBody>
