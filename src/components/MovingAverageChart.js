@@ -56,7 +56,7 @@ handle200DaysAverageData(){
 	  const movingAverageData =this.props.data;
 
 	const actualPriceData = {
-		type: "column",
+		type: "line",
 		name: "Actual Price",
 		showInLegend: true,
 		xValueFormatString: "MMMM-YYYY",

@@ -91,6 +91,10 @@ class Analysis extends React.Component {
             isQuarterAnalysisGraph:false,
             isMovingAverageGraph:false,
             isStockComparisonGraph:false,
+            quarterAnalysisInput:'',
+            stockComparsionFirstInput:'',
+            stockComparsionSecondInput:'',
+            movingAverageInput:'',
             
         });
       }; 
