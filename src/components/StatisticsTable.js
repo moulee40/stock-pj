@@ -39,41 +39,46 @@ class StatisticsTable extends React.Component {
     const { handleBack, classes, data } = this.props;
 
     return (
-      <div className="space-y-14">
-        <h1 className="cursor-pointer underline text-3xl" onClick={handleBack}>
+      <div className="space-y-6">
+        <p
+          className="max-w-min cursor-pointer underline text-2xl text-indigo-900 hover:text-purple-800"
+          onClick={handleBack}
+        >
           Back
-        </h1>
-        <p className="text-5xl">{data[0].companyName}</p>
-        <TableContainer component={Paper}>
-          <Table className={classes.table} aria-label="customized table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>Index</StyledTableCell>
-                <StyledTableCell>Date</StyledTableCell>
-                <StyledTableCell>Open</StyledTableCell>
-                <StyledTableCell>Close</StyledTableCell>
-                <StyledTableCell>High</StyledTableCell>
-                <StyledTableCell>Low</StyledTableCell>
-                <StyledTableCell>Volume</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.map((row, index) => (
-                <StyledTableRow key={index}>
-                  <StyledTableCell component="th" scope="row">
-                    {index}
-                  </StyledTableCell>
-                  <StyledTableCell>{row.tradeDate}</StyledTableCell>
-                  <StyledTableCell>{row.openPrice}</StyledTableCell>
-                  <StyledTableCell>{row.closePrice}</StyledTableCell>
-                  <StyledTableCell>{row.highPrice}</StyledTableCell>
-                  <StyledTableCell>{row.lowPrice}</StyledTableCell>
-                  <StyledTableCell>{row.volume}</StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        </p>
+        <div>
+          <p className="text-4xl mb-5 text-center">{data[0].companyName}</p>
+          <TableContainer component={Paper}>
+            <Table className={classes.table} aria-label="customized table">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell>Index</StyledTableCell>
+                  <StyledTableCell>Date</StyledTableCell>
+                  <StyledTableCell>Open</StyledTableCell>
+                  <StyledTableCell>Close</StyledTableCell>
+                  <StyledTableCell>High</StyledTableCell>
+                  <StyledTableCell>Low</StyledTableCell>
+                  <StyledTableCell>Volume</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data.map((row, index) => (
+                  <StyledTableRow key={index}>
+                    <StyledTableCell component="th" scope="row">
+                      {index}
+                    </StyledTableCell>
+                    <StyledTableCell>{row.tradeDate}</StyledTableCell>
+                    <StyledTableCell>{row.openPrice}</StyledTableCell>
+                    <StyledTableCell>{row.closePrice}</StyledTableCell>
+                    <StyledTableCell>{row.highPrice}</StyledTableCell>
+                    <StyledTableCell>{row.lowPrice}</StyledTableCell>
+                    <StyledTableCell>{row.volume}</StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
       </div>
     );
   }

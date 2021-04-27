@@ -9,7 +9,9 @@ class Main extends React.Component {
   render() {
     return (
       <div className="space-y-5 h-screen flex flex-col">
-        <h2 className="text-4xl font-semibold">UCM Finance Home</h2>
+        <h2 className="text-4xl font-semibold text-indigo-900">
+          UCM Finance Home
+        </h2>
         <Tab />
       </div>
     );
